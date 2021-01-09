@@ -31,7 +31,7 @@ You can pass these arguments:
 
 ## Download from already parsed data
 
-You can pass a JSON file for download file directly from already parsed data. Use **-d** or **--download** argument to pass the JSON file path. It is **very important**to follow the scheme below.
+You can pass a JSON file for download file directly from already parsed data. Use **-d** or **--download** argument to pass the JSON file path. It is **very important** to follow the scheme below.
 
 ### JSON parsed data structure
 
