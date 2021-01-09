@@ -61,8 +61,7 @@ def get_input_contents():
         content_to_parse.append(new_insert)
 
         insert_one = False if input(
-            "Do you want to insert another content? (y/n) ").lower() == "n" else True
-        print()
+            "\nDo you want to insert another content? (y/n) ").lower() == "n" else True
 
     return content_to_parse
 

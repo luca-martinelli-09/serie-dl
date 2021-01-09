@@ -67,7 +67,7 @@ class ContentDownloader:
             # if content is movie download it directly
             if content["type"] == "movie":
                 if self.__options["view_log"] is True:
-                    print("[DOWNLOADING] {title}".format(
+                    print("\n[DOWNLOADING] {title}".format(
                         title=content["title"]))
                 try:
                     # download file and add it to success download list
@@ -85,7 +85,7 @@ class ContentDownloader:
                     for episode in season["episodes"]:
                         if self.__options["view_log"] is True:
                             print(
-                                "[DOWNLOADING] {serie_title}, S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
+                                "\n[DOWNLOADING] {serie_title}, S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
                                     serie_title=content["title"],
                                     season_num=season["season"],
                                     episode_num=episode["episode"],
@@ -104,7 +104,7 @@ class ContentDownloader:
                             self.__download_failed.append(ep_content)
                             if self.__options["view_log"] is True:
                                 print("\t[ERROR]", e)
-        
+
         # return success download list and failed download list
         return self.__download_success, self.__download_failed
 
