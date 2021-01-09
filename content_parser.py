@@ -28,10 +28,10 @@ class ContentParser:
         self.__setup_driver()
 
         for content in contents:
-            if "type" in content.keys() and content["type"] == "film":
-                film_info = self.__get_film_info(content)
-                if film_info is not None:
-                    self.__contents_got.append(film_info)
+            if "type" in content.keys() and content["type"] == "movie":
+                movie_info = self.__get_movie_info(content)
+                if movie_info is not None:
+                    self.__contents_got.append(movie_info)
             else:
                 serie_info = self.__get_serie_info(content)
                 if serie_info is not None:
@@ -61,7 +61,7 @@ class ContentParser:
                             episode["download_url"] = episode_url_download
                         except Exception as e:
                             if self.__options["view_log"] is True:
-                                print("[ERROR] " + e.args[0])
+                                print("[ERROR]", e)
 
         self.__driver.close()
         return self.__contents_got
@@ -72,7 +72,7 @@ class ContentParser:
             parse_info = self.__get_parse_info(serie_url)
             self.__driver.get(serie_url)
             serie_title = serie["title"] if "title" in serie.keys(
-            ) else parse_info.parse_title(self.__driver)
+            ) and serie["title"] is not None else parse_info.parse_title(self.__driver)
             seasons_selected = serie["seasons"] if "seasons" in serie.keys(
             ) else None
 
@@ -123,42 +123,42 @@ class ContentParser:
 
         except Exception as e:
             if self.__options["view_log"] is True:
-                print("[ERROR] " + e.args[0])
+                print("[ERROR]", e)
         return None
 
-    def __get_film_info(self, film):
+    def __get_movie_info(self, movie):
         try:
-            film_url = film["url"]
-            parse_info = self.__get_parse_info(film_url)
-            self.__driver.get(film_url)
-            film_title = film["title"] if "title" in film.keys(
-            ) else parse_info.parse_film_title(self.__driver)
+            movie_url = movie["url"]
+            parse_info = self.__get_parse_info(movie_url)
+            self.__driver.get(movie_url)
+            movie_title = movie["title"] if "title" in movie.keys(
+            ) and movie["title"] is not None else parse_info.parse_movie_title(self.__driver)
 
-            film_info = {
-                "title": film_title,
-                "url": film_url,
-                "type": "film",
+            movie_info = {
+                "title": movie_title,
+                "url": movie_url,
+                "type": "movie",
                 "download_url": None
             }
 
             if self.__options["view_log"] is True:
-                print("\n### {film_title} ###".format(
-                    film_title=film_title.upper()))
+                print("\n### {movie_title} ###".format(
+                    movie_title=movie_title.upper()))
 
-            film_info["download_url"] = parse_info.parse_dwl_url_film(
+            movie_info["download_url"] = parse_info.parse_dwl_url_movie(
                 self.__driver)
 
             if self.__options["view_log"] is True:
-                if film_info["download_url"] is not None:
+                if movie_info["download_url"] is not None:
                     print("\tDownload link found")
                 else:
                     print("\tDownload link not found")
 
-            return film_info
+            return movie_info
 
         except Exception as e:
             if self.__options["view_log"] is True:
-                print("[ERROR] " + e.args[0])
+                print("[ERROR]", e)
         return None
 
     def __get_parse_info(self, serie_url):

@@ -11,7 +11,7 @@ class GenioParser:
     def parse_title(self, element):
         return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
     
-    def parse_film_title(self, element):
+    def parse_movie_title(self, element):
         return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
 
     def parse_seasons(self, element):
@@ -64,5 +64,5 @@ class GenioParser:
         else:
             raise Exception("Error on getting download link")
     
-    def parse_dwl_url_film(self, driver):
+    def parse_dwl_url_movie(self, driver):
         return self.parse_dwn_url(driver)

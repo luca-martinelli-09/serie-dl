@@ -18,10 +18,10 @@ serie:
             |- url: episode url page
             |- download_url: download link for youtube_dl
 
-film:
-    |- title: film title
-    |- url: film url page
-    |- type: "film"
+movie:
+    |- title: movie title
+    |- url: movie url page
+    |- type: "movie"
     |- download_url: download link for youtube_dl
 
 
@@ -31,7 +31,7 @@ film:
 class ContentDownloader:
     __options = {"file_format": "mp4",
                  "serie_tmpl": "{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}",
-                 "film_tmpl": "{film_title}",
+                 "movie_tmpl": "{movie_title}",
                  "download_folder": "./",
                  "view_log": True}
     __download_failed = []
@@ -52,87 +52,89 @@ class ContentDownloader:
         if filename is None and contents is None:
             raise ArgumentError(
                 "At least one of contents and filename must not be None")
-        try:
-            if filename is not None and contents is None:
-                contents = self.__get_contents_from_file(filename)
+        if filename is not None and contents is None:
+            contents = self.__get_contents_from_file(filename)
 
-            for content in contents:
-                if content["type"] == "film":
-                    if self.__options["view_log"] is True:
-                        print("# Downloading " + content["title"])
+        for content in contents:
+            if content["type"] == "movie":
+                if self.__options["view_log"] is True:
+                    print("[DOWNLOADING] {title}".format(
+                        title=content["title"]))
+                try:
                     self.__download_content(content)
                     self.__download_success.append(content)
-                else:
-                    for season in content["seasons"]:
-                        season = content["seasons"][season]
-                        for episode in season["episodes"]:
-                            serie_info = {
-                                "title": content["title"], "season": season["season"]}
+                except DownloadException as e:
+                    self.__download_failed.append(content)
+                    if self.__options["view_log"] is True:
+                        print("\t[ERROR]", e)
+            else:
+                for season in content["seasons"]:
+                    season = content["seasons"][season]
+                    for episode in season["episodes"]:
+                        if self.__options["view_log"] is True:
+                            print(
+                                "[DOWNLOADING] {serie_title}, S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
+                                    serie_title=content["title"],
+                                    season_num=season["season"],
+                                    episode_num=episode["episode"],
+                                    episode_title=episode["title"]
+                                ))
+                        ep_content = episode.copy()
+                        ep_content["serie_title"] = content["title"]
+                        ep_content["season"] = season["season"]
+                        try:
+                            self.__download_content(ep_content)
+                            self.__download_success.append(ep_content)
+                        except DownloadException as e:
+                            self.__download_failed.append(ep_content)
                             if self.__options["view_log"] is True:
-                                print(
-                                    "# Downloading {serie_title}, S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
-                                        serie_title=content["title"],
-                                        season_num=season["season"],
-                                        episode_num=episode["episode"],
-                                        episode_title=episode["title"]
-                                    ))
-                            self.__download_content(episode, serie_info)
-                            ep_content_success = episode.copy()
-                            ep_content_success["serie_title"] = content["title"]
-                            ep_content_success["season"] = season["season"]
-                            self.__download_success.append(ep_content_success)
-            return self.__download_success, self.__download_failed
+                                print("\t[ERROR]", e)
 
-        except Exception as e:
-            if self.__options["view_log"] is True:
-                print("[ERROR] " + e.args[0])
+        return self.__download_success, self.__download_failed
 
     def __get_contents_from_file(self, filename):
         try:
             with open(filename) as f:
                 contents = json.load(f)
                 return contents
-        except Exception as e:
-            raise e
+        except Exception:
+            return []
 
-    def __download_content(self, content, serie_info=None):
+    def __download_content(self, content):
         if content["download_url"] != "":
-
-            if serie_info is None:
-                download_title = self.__options["film_tmpl"].format(
-                    film_title=content["title"]
+            if "serie_title" not in content.keys():
+                download_title = self.__options["movie_tmpl"].format(
+                    movie_title=content["title"]
                 )
                 download_folder = self.__options["download_folder"]
             else:
                 download_title = self.__options["serie_tmpl"].format(
-                    serie_name=serie_info["title"],
-                    season_num=serie_info["season"],
+                    serie_name=content["serie_title"],
+                    season_num=content["season"],
                     episode_num=content["episode"],
                     episode_title=content["title"],
                 )
-                download_folder = self.__get_download_folder(serie_info)
+                download_folder = self.__get_download_folder(content)
 
             ydl_opts = {"outtmpl": download_folder +
                         download_title + "." + self.__options["file_format"],
-                        "ignoreerrors": True,
                         "debug_printtraffic": False,
                         "external_downloader_args": ['-loglevel', 'panic']}
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 try:
                     ydl.download([content["download_url"]])
                 except:
-                    self.__download_failed.append(content)
-                    raise("Cannot download file. Skipping download")
+                    raise DownloadException(
+                        "Cannot download file. Skipping download")
         else:
-            self.__download_failed.append(content)
-            raise Exception("URL doesn't exist. Skippikg download")
+            raise DownloadException("URL doesn't exist. Skippikg download")
 
     def __get_download_folder(self, serie_info):
         download_folder = self.__options["download_folder"]
         # Create serie folder
         try:
             download_folder += "{serie_title}/".format(
-                serie_title=serie_info["title"])
+                serie_title=serie_info["serie_title"])
             if not os.path.exists(download_folder):
                 os.mkdir(download_folder)
         except KeyError:
@@ -148,3 +150,12 @@ class ContentDownloader:
             pass
 
         return download_folder
+
+
+class DownloadException(Exception):
+    def __init__(self, message="Cannot download file. Skipping download"):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f'{self.message}'
