@@ -41,10 +41,10 @@ If content is a movie, the structure must be:
 
 ```json
 {
-  "title": "", // Movie's title
-  "url": "", // Movie's url page
+  "title": "movie's title",
+  "url": "movie's url page",
   "type": "movie",
-  "download_url": "" // Download link for youtube_dl
+  "download_url": "download link for youtube_dl"
 }
 ```
 
@@ -52,20 +52,18 @@ If content is a serie, the structure must be:
 
 ```json
 {
-  "title": "", // Series's title
-  "url": "", // Series's url page
+  "title": "series's title",
+  "url": "series's url page",
   "type": "serie",
   "seasons": {
     "1": {
-      // Season number as str
-      "season": 1, // Season number in int
+      "season": 1,
       "episodes": [
-        // List of episodes
         {
-          "episode": 1, // Episode number
-          "title": "", // Episode's title
-          "url": "", // Episodes's url page
-          "download_url": "" // Download link for youtube_dl
+          "episode": 1,
+          "title": "episode's title",
+          "url": "episodes's url page",
+          "download_url": "download link for youtube_dl"
         }
       ]
     }
@@ -74,6 +72,7 @@ If content is a serie, the structure must be:
 ```
 
 ## Custom config
+
 You can edit [default.ini](default.ini) to change default options used by serie-dl, or you can pass a custom config file with argument **-c** or **--conf**. Settings you can pass are:
 
 ```ini
@@ -94,26 +93,30 @@ download_folder = // download folder
 ```
 
 ### Serie and Movie file name template
+
 For serie_tmpl you can use these variables:
-   - serie_name
-   - season_num
-   - episode_num
-   - episode_title
+
+- serie_name
+- season_num
+- episode_num
+- episode_title
 
 For movie_tmpl you can use these variables:
-   - movie_title
+
+- movie_title
 
 **How?**
 
 Python will format the strings given. An example:
 
-```{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}```
+`{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}`
 
 will return:
 
-```Black Mirror - S01E02 - Fifteen Million Merits```
+`Black Mirror - S01E02 - Fifteen Million Merits`
 
 ## Custom parser
+
 You can also edit the code to add custom parser, following these scheme:
 
 ```python
@@ -124,7 +127,7 @@ def CustomParser:
         # update options with one given by the user (if there's)
         if options is not None:
             self.__options.update(options)
-   
+
    # element is selenium webdriver
    def parse_title(element):
       # return string of serie's title
