@@ -109,7 +109,7 @@ For **movie_tmpl** you can use these variables:
 
 **HOW?**
 
-Python will format the strings given. An example:
+Strings given will be formatted. Example:
 
 `{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}`
 
