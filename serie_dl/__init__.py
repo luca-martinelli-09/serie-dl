@@ -1,5 +1,5 @@
-from content_parser import ContentParser
-from content_downloader import ContentDownloader
+from serie_dl.content_parser import ContentParser
+from serie_dl.content_downloader import ContentDownloader
 import configparser
 import argparse
 import json
@@ -58,6 +58,7 @@ def get_input_contents():
 
 
 def parse_csv():
+    # csv format: url,title,type,seasons divided by space
     content_to_parse = []
     try:
         with open(args.sourcefile, "r") as f:
@@ -67,12 +68,14 @@ def parse_csv():
                 if row[0] != "url":
                     header = False
                 if header == False:
+                    # get seasons to download
                     seasons = []
                     for i in row[3].split(" "):
                         try:
                             seasons.append(int(i))
                         except Exception:
                             pass
+                    # append content infos to list
                     content_to_parse.append({
                         "url": row[0],
                         "title": row[1].strip() if row[1].strip() != "" else None,
@@ -90,12 +93,13 @@ def get_configs():
     config = configparser.ConfigParser()
     config.read(args.configname)
 
+    # load config from config file, otherwise use defaults values
     view_log = config["DEFAULT"].getboolean("view_log", True)
     chrome_location = config["PARSER"].get("chrome_location", None)
     chromedriver_location = config["PARSER"].get(
         "chromedriver_location", "./chromedriver/chromedriver.exe")
     headless = config["PARSER"].getboolean("headless", True)
-    elapse_time = config["PARSER"].getint("elapse_time", 60)
+    elapse_time = config["PARSER"].getint("elapse_time", 30)
     file_format = config["DOWNLOADER"].get("file_format", "mp4")
     serie_tmpl = config["DOWNLOADER"].get(
         "serie_tmpl", "{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}")
@@ -121,12 +125,16 @@ def get_configs():
     return parser_options, downloader_options
 
 
-if __name__ == "__main__":
+def main():
+    global args
+    # get options from config file
     parser_options, downloader_options = get_configs()
 
+    # set custom download folder if passed to args
     if args.outputfolder is not None:
         downloader_options["downloader_folder"] = args.outputfolder
 
+    # get already parse contents from input file, otherwise use None
     contents_parsed = None
     if args.parsedfile is not None:
         try:
@@ -135,18 +143,25 @@ if __name__ == "__main__":
         except Exception as e:
             print("[WARNING]", e)
 
+    # if no passed already parsed file, parse movies and series
     if contents_parsed is None:
+        # setup parser
         content_parser = ContentParser(options=parser_options)
 
         content_to_parse = []
+
+        # if csv file is given in args, get infos from it, otherwise ask to user
         if args.sourcefile is None:
             content_to_parse = get_input_contents()
         else:
             content_to_parse = parse_csv()
 
+        # parse contents
         contents_parsed = content_parser.parse_contents(content_to_parse)
 
+    # if onlyparse, then save parsed contents to parsed_data.json, otherwise, start download files
     if not args.onlyparse:
+        # setup downloader
         downloader = ContentDownloader(options=downloader_options)
         download_success, download_failed = downloader.download_contents(
             contents_parsed)
@@ -154,6 +169,7 @@ if __name__ == "__main__":
         print("\n[DOWNLOADED] Successfull downloads:", len(download_success))
         print("[FAILED] Failed downloads (see log.txt):", len(download_failed))
 
+        # save failed downloads to log.txt
         with open("log.txt", "a+") as f:
             for failed in download_failed:
                 if failed["type"] == "movie":
@@ -166,6 +182,7 @@ if __name__ == "__main__":
                                                                     episode_title=failed["title"]))
 
     else:
+        # save parsed contents to parsed_data.json
         with open('parsed_data.json', 'w') as f:
             json.dump(contents_parsed, f)
             print("\n[SUCCESS] Parsed data saved in parsed_data.json")
