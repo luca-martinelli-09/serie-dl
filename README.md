@@ -89,9 +89,9 @@ elapse_time = time after stop looking for download link (time in seconds)
 
 [DOWNLOADER]
 file_format = file format
-serie_tmpl = // downloaded file name format for serie`s episodes
-movie_tmpl = // downloaded file name format for movies
-download_folder = // download folder
+serie_tmpl = downloaded file name format for serie`s episodes
+movie_tmpl = downloaded file name format for movies
+download_folder = download folder
 ```
 
 ### Serie and Movie file name template
