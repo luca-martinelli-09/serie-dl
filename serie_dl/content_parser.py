@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from urllib.parse import urlparse
 from serie_dl.parsers.genio_parser import GenioParser
+from serie_dl.parsers.vvvvid_parser import VVVVIDParser
 
 
 class ContentParser:
@@ -21,7 +22,8 @@ class ContentParser:
             self.__options.update(options)
         # parser avaiable (user can pass its parser, see README.md for details)
         self.__site_parsers = {
-            "ilgeniodellostreaming": GenioParser(self.__options)}
+            "ilgeniodellostreaming": GenioParser(self.__options),
+            "vvvvid": VVVVIDParser(self.__options)}
         if custom_parser is not None:
             self.__site_parsers.update(custom_parser)
 
