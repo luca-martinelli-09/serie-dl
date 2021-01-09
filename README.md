@@ -2,6 +2,18 @@
 
 A series and movies downloader for python
 
+## Requirements
+
+In [requirements.txt](requirements.txt) you can see libraries required. You need also installed Google Chrome.
+
+## Usage
+
+```bash
+python serie-dl.py [arguments]
+```
+
+Arguments are listed below.
+
 ## How it works
 
 You can pass a CSV file or insert data by input.
