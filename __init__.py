@@ -68,9 +68,11 @@ def parse_csv():
                     header = False
                 if header == False:
                     seasons = []
-                    for i in row[3:]:
-                        if i != "":
+                    for i in row[3].split(" "):
+                        try:
                             seasons.append(int(i))
+                        except Exception:
+                            pass
                     content_to_parse.append({
                         "url": row[0],
                         "title": row[1].strip() if row[1].strip() != "" else None,

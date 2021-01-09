@@ -92,7 +92,7 @@ class ContentDownloader:
 
         return self.__download_success, self.__download_failed
 
-    def __get_contents_from_file(self, filename):
+    def __get_contents_from_file(filename):
         try:
             with open(filename) as f:
                 contents = json.load(f)

@@ -48,7 +48,7 @@ class ContentParser:
                         self.__driver.get(episode["url"])
 
                         if self.__options["view_log"] is True:
-                            print("Getting download url for \"{serie_title}\", S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
+                            print("Getting download url for {serie_title}, S{season_num:02d}E{episode_num:02d}: {episode_title}".format(
                                 serie_title=serie["title"],
                                 season_num=season["season"],
                                 episode_num=episode["episode"],
