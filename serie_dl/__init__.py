@@ -17,7 +17,7 @@ args_parser.add_argument("-p", "--parse", dest="onlyparse", action="store_true",
                          help="Parse movies and series but don't download it")
 args_parser.set_defaults(onlyparse=False)
 args_parser.add_argument("-c", "--conf", dest="configname",
-                         help="Custom config file")
+                         help="Use custom config file")
 args_parser.set_defaults(configname="default.ini")
 
 args = args_parser.parse_args()
