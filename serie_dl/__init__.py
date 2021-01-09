@@ -44,9 +44,19 @@ def get_input_contents():
         new_insert["url"] = c_url
 
         if c_type == "serie":
-            c_seasons = [int(i) for i in input(
-                "Insert seasons (divided by space) to download (enter for all): ").split(" ")]
-            new_insert["seasons"] = c_seasons
+            c_seasons = []
+            input_seasons = input(
+                "Insert seasons (divided by space) to download (enter for all): ").strip()
+            if input_seasons != "":
+                for i in input_seasons.split(" "):
+                    try:
+                        c_seasons.append(int(i))
+                    except Exception:
+                        pass
+            if len(c_seasons) > 0:
+                new_insert["seasons"] = c_seasons
+            else:
+                new_insert["seasons"] = None
 
         content_to_parse.append(new_insert)
 
@@ -75,6 +85,8 @@ def parse_csv():
                             seasons.append(int(i))
                         except Exception:
                             pass
+                    if len(seasons) <= 0:
+                        seasons = None
                     # append content infos to list
                     content_to_parse.append({
                         "url": row[0],
