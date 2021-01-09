@@ -23,7 +23,8 @@ class ContentParser:
         # parser avaiable (user can pass its parser, see README.md for details)
         self.__site_parsers = {
             "ilgeniodellostreaming": GenioParser(self.__options),
-            "vvvvid": VVVVIDParser(self.__options)}
+            "vvvvid": VVVVIDParser(self.__options),
+            "guardaserie": GenioParser(self.__options)}
         if custom_parser is not None:
             self.__site_parsers.update(custom_parser)
 
