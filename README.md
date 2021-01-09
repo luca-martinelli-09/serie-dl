@@ -4,7 +4,7 @@ A series and movies downloader for python
 
 ## How it works
 
-You can pass a CSV file or inserts data by input.
+You can pass a CSV file or insert data by input.
 
 **Data to insert are:**
 
@@ -13,9 +13,9 @@ You can pass a CSV file or inserts data by input.
 - type (movie/serie)
 - seasons to download
 
-See [example.csv](example.csv) for an example of CSV file
+See [example.csv](example.csv) for an example of CSV file.
 
-**Currently the app supports these sites:**
+**Currently supported these sites:**
 
 - ilgeniodellostreaming
 
@@ -70,6 +70,8 @@ If content is a serie, the structure must be:
   }
 }
 ```
+
+See [parsed_data.json](parsed_data.json) for an example.
 
 ## Custom config
 

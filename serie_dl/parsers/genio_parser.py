@@ -10,25 +10,25 @@ class GenioParser:
         if options is not None:
             self.__options.update(options)
 
-    def parse_title(element):
+    def parse_title(self, element):
         return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
 
-    def parse_movie_title(element):
+    def parse_movie_title(self, element):
         return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
 
-    def parse_seasons(element):
+    def parse_seasons(self, element):
         return element.find_elements_by_css_selector("#seasons .se-c")
 
-    def parse_episodes(element):
+    def parse_episodes(self, element):
         return element.find_elements_by_css_selector(".episodios li")
 
-    def parse_episode_title(element):
+    def parse_episode_title(self, element):
         return element.find_element_by_css_selector(".episodiotitle a").get_attribute('textContent').strip()
 
-    def parse_episode_link(element):
+    def parse_episode_link(self, element):
         return element.find_element_by_css_selector(".episodiotitle a").get_attribute('href')
 
-    def parse_ep_ss_num(element):
+    def parse_ep_ss_num(self, element):
         # infos in the form "SN - EN"
         return element.find_element_by_class_name("numerando").get_attribute('textContent').split(" - ")
 
