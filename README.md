@@ -94,18 +94,18 @@ download_folder = // download folder
 
 ### Serie and Movie file name template
 
-For serie_tmpl you can use these variables:
+For **serie_tmpl** you can use these variables:
 
 - serie_name
 - season_num
 - episode_num
 - episode_title
 
-For movie_tmpl you can use these variables:
+For **movie_tmpl** you can use these variables:
 
 - movie_title
 
-**How?**
+**HOW?**
 
 Python will format the strings given. An example:
 
