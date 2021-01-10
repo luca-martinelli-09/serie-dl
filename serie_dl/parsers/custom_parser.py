@@ -33,17 +33,17 @@ class CustomParser:
         # return selenium elements of episodes
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_episode_title(self, driver, element):
         # return episode title as string
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_episode_link(self, driver, element):
         # return episode link page as string
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_ep_ss_num(self, driver, element):
         # return list of episode number and season number (int)
         pass

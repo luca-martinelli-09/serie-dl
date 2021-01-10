@@ -10,7 +10,7 @@ Libraries required are **youtube_dl**, **selenium** and **requests**. Also neede
 pip install youtube_dl, selenium, requests
 ```
 
-You need also **Google Chrome**. If the script return a "Binary Chrome not found" error you must change in **default.ini** the Chrome's binary exe's path.
+You need also **Google Chrome**. If the script return a "cannot find Chrome binary" error you must change in **default.ini** the Chrome's binary exe's path.
 
 ## Usage
 
@@ -99,7 +99,7 @@ See [parsed_data.json](parsed_data.json) for an example.
 You can edit [default.ini](default.ini) to change default options used by serie-dl, or you can pass a custom config file with argument **-c** or **--conf**. Settings you can pass are:
 
 ```ini
-[DEFAULT]
+[GLOBAL]
 view_log = print logs (yes or not)
 
 [PARSER]
@@ -178,17 +178,17 @@ class CustomParser:
         # return selenium elements of episodes
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_episode_title(self, driver, element):
         # return episode title as string
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_episode_link(self, driver, element):
         # return episode link page as string
         pass
 
-    # element is season element got by parse_episodes
+    # element is episode element got by parse_episodes
     def parse_ep_ss_num(self, driver, element):
         # return list of episode number and season number (int)
         pass

@@ -4,6 +4,7 @@ import configparser
 import argparse
 import json
 import csv
+import os
 
 args_parser = argparse.ArgumentParser(
     description="Download multiple files (serie's episodes or movies) using youtube-dl")
@@ -102,20 +103,32 @@ def parse_csv():
 def get_configs():
     global args
     config = configparser.ConfigParser()
-    config.read(args.configname)
+
+    config["GLOBAL"] = {"view_log": True}
+    config["PARSER"] = {"chrome_location": "",
+                        "chromedriver_location": "./chromedriver/chromedriver.exe",
+                        "headless": True,
+                        "elapse_time": 30}
+    config["DOWNLOADER"] = {"file_format": "mp4",
+                            "serie_tmpl": "{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}",
+                            "movie_tmpl": "{movie_title}",
+                            "download_folder": "./"}
+
+    try:
+        config.read(args.configname)
+    except Exception:
+        pass
 
     # load config from config file, otherwise use defaults values
-    view_log = config["DEFAULT"].getboolean("view_log", True)
-    chrome_location = config["PARSER"].get("chrome_location", None)
-    chromedriver_location = config["PARSER"].get(
-        "chromedriver_location", "./chromedriver/chromedriver.exe")
-    headless = config["PARSER"].getboolean("headless", True)
-    elapse_time = config["PARSER"].getint("elapse_time", 30)
-    file_format = config["DOWNLOADER"].get("file_format", "mp4")
-    serie_tmpl = config["DOWNLOADER"].get(
-        "serie_tmpl", "{serie_name} - S{season_num:02d}E{episode_num:02d} - {episode_title}")
-    movie_tmpl = config["DOWNLOADER"].get("movie_tmpl", "{movie_title}")
-    download_folder = config["DOWNLOADER"].get("download_folder", "./")
+    view_log = config["GLOBAL"].getboolean("view_log")
+    chrome_location = config["PARSER"].get("chrome_location") if config["PARSER"].get("chrome_location") != "" else None
+    chromedriver_location = config["PARSER"].get("chromedriver_location")
+    headless = config["PARSER"].getboolean("headless")
+    elapse_time = config["PARSER"].getint("elapse_time")
+    file_format = config["DOWNLOADER"].get("file_format")
+    serie_tmpl = config["DOWNLOADER"].get("serie_tmpl")
+    movie_tmpl = config["DOWNLOADER"].get("movie_tmpl")
+    download_folder = config["DOWNLOADER"].get("download_folder")
 
     parser_options = {
         "view_log": view_log,
