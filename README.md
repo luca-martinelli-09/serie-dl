@@ -14,10 +14,12 @@ You need also **Google Chrome**. If the script return a "cannot find Chrome bina
 
 ## Usage
 
+Using python
 ```bash
 python serie-dl.py [arguments]
 ```
 
+Using exe
 ```bash
 serie-dl.exe [arguments]
 ```
