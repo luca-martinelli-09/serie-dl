@@ -143,7 +143,7 @@ def main():
 
     # set custom download folder if passed to args
     if args.outputfolder is not None:
-        downloader_options["downloader_folder"] = args.outputfolder
+        downloader_options["download_folder"] = args.outputfolder
 
     # get already parse contents from input file, otherwise use None
     contents_parsed = None

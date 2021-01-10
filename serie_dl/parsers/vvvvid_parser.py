@@ -102,4 +102,4 @@ class VVVVIDParser:
         response = json.loads(
             driver.find_element_by_tag_name("pre").text)
         episode = {"episode": response["data"][0]["episodes"][0]}
-        return self.__parse_episode_link(driver, episode)
+        return self.parse_episode_link(driver, episode)
