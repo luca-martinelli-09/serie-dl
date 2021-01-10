@@ -1,8 +1,10 @@
+from urllib import parse
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from urllib.parse import urlparse
 from serie_dl.parsers.genio_parser import GenioParser
 from serie_dl.parsers.vvvvid_parser import VVVVIDParser
+from serie_dl.parsers.seriehd_parser import SerieHDParser
 
 
 class ContentParser:
@@ -24,7 +26,8 @@ class ContentParser:
         self.__site_parsers = {
             "ilgeniodellostreaming": GenioParser(self.__options),
             "vvvvid": VVVVIDParser(self.__options),
-            "guardaserie": GenioParser(self.__options)}
+            "guardaserie": GenioParser(self.__options),
+            "seriehd": SerieHDParser(self.__options)}
         if custom_parser is not None:
             self.__site_parsers.update(custom_parser)
 
@@ -39,16 +42,24 @@ class ContentParser:
         # get main infos for each content (title, number of seasons, etc...)
         for content in contents:
             if "type" in content.keys() and content["type"] == "movie":
+                content["type"] == "movie"
                 movie_info = self.__get_movie_info(content)
                 # if movie infos got append to contents
                 # movie info get also download link for youtube-dl
                 if movie_info is not None:
                     self.__contents_got.append(movie_info)
+                else:
+                    if self.__options["view_log"] is True:
+                        print("[ERROR]", content["url"], " is not supported")
             else:
+                content["type"] == "serie"
                 serie_info = self.__get_serie_info(content)
                 # if serie infos got append to contents
                 if serie_info is not None:
                     self.__contents_got.append(serie_info)
+                else:
+                    if self.__options["view_log"] is True:
+                        print("[ERROR]", content["url"], " is not supported")
 
         if self.__options["view_log"] is True:
             print("\nGetting download links for episodes\n")
@@ -71,7 +82,7 @@ class ContentParser:
 
                         try:
                             # get parser and get episode download link for youtube-dl
-                            parse_info = self.__get_parse_info(serie["url"])
+                            parse_info = self.__get_parse_info(serie)
                             episode_url_download = parse_info.parse_dwn_url(
                                 self.__driver)
                             episode["download_url"] = episode_url_download
@@ -87,7 +98,7 @@ class ContentParser:
         try:
             serie_url = serie["url"]
             # get parser
-            parse_info = self.__get_parse_info(serie_url)
+            parse_info = self.__get_parse_info(serie)
 
             # navigate to serie's page
             self.__driver.get(serie_url)
@@ -116,12 +127,14 @@ class ContentParser:
             # select all seasons
             for season in parse_info.parse_seasons(self.__driver):
                 # select episodes for season
-                for episode in parse_info.parse_episodes(season):
+                for episode in parse_info.parse_episodes(self.__driver, season):
                     # parse episode title, link, season number and episode number
-                    episode_title = parse_info.parse_episode_title(episode)
-                    episode_link = parse_info.parse_episode_link(episode)
-                    season_num, episode_num = parse_info.parse_ep_ss_num(
-                        episode)
+                    episode_title = parse_info.parse_episode_title(
+                        self.__driver, episode)
+                    episode_link = parse_info.parse_episode_link(
+                        self.__driver, episode)
+                    season_num, episode_num = parse_info.parse_ep_ss_num(self.__driver,
+                                                                         episode)
                     season_num, episode_num = int(season_num), int(episode_num)
 
                     # if season is selected by the user add it to serie_info
@@ -151,6 +164,7 @@ class ContentParser:
             return serie_info
 
         except Exception as e:
+            raise e
             if self.__options["view_log"] is True:
                 print("[ERROR]", e)
         return None
@@ -159,7 +173,7 @@ class ContentParser:
         try:
             movie_url = movie["url"]
             # get parser
-            parse_info = self.__get_parse_info(movie_url)
+            parse_info = self.__get_parse_info(movie)
 
             # navigate to serie's page
             self.__driver.get(movie_url)
@@ -197,13 +211,20 @@ class ContentParser:
                 print("[ERROR]", e)
         return None
 
-    def __get_parse_info(self, serie_url):
+    def __get_parse_info(self, content):
         # parse url and check if there is one site in parsers list
-        url_info = urlparse(serie_url)
+        url_info = urlparse(content["url"])
         site_title = url_info.netloc
         for site_key in self.__site_parsers.keys():
             if site_title.lower().find(site_key) >= 0:
-                return self.__site_parsers[site_key]
+                parser = self.__site_parsers[site_key]
+                parser.set_content(content)
+
+                if content["type"] not in parser.support:
+                    raise Exception(
+                        f"Site {site_title} is not supported for type", content["type"])
+
+                return parser
         raise Exception(f"Site {site_title} is not supported")
 
     def __setup_driver(self):

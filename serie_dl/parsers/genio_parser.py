@@ -4,31 +4,38 @@ import time
 
 class GenioParser:
     __options = {"elapse_tile": 30}
+    __content = {}
+    support = ["serie"]
 
-    def __init__(self, options):
+    def __init__(self, options=None, content=None):
         # update options with one given by the user (if there's)
         if options is not None:
             self.__options.update(options)
+        if content is not None:
+            self.__content.update(content)
 
-    def parse_title(self, element):
-        return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
+    def set_content(self, content):
+        self.__content.update(content)
 
-    def parse_movie_title(self, element):
-        return element.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
+    def parse_title(self, driver):
+        return driver.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
 
-    def parse_seasons(self, element):
-        return element.find_elements_by_css_selector("#seasons .se-c")
+    def parse_movie_title(self, driver):
+        return driver.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
 
-    def parse_episodes(self, element):
+    def parse_seasons(self, driver):
+        return driver.find_elements_by_css_selector("#seasons .se-c")
+
+    def parse_episodes(self, driver, element):
         return element.find_elements_by_css_selector(".episodios li")
 
-    def parse_episode_title(self, element):
+    def parse_episode_title(self, driver, element):
         return element.find_element_by_css_selector(".episodiotitle a").get_attribute('textContent').strip()
 
-    def parse_episode_link(self, element):
+    def parse_episode_link(self, driver, element):
         return element.find_element_by_css_selector(".episodiotitle a").get_attribute('href')
 
-    def parse_ep_ss_num(self, element):
+    def parse_ep_ss_num(self, driver, element):
         # infos in the form "SN - EN"
         return element.find_element_by_class_name("numerando").get_attribute('textContent').split(" - ")
 
@@ -68,7 +75,7 @@ class GenioParser:
                         video_dwl_url = e['params']['response']["url"]
                 except KeyError:
                     pass
-            #update elapsed time
+            # update elapsed time
             elapsed_time = time.time() - start_time
 
         # if video download got, then return it, otherwise return exception
