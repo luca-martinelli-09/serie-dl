@@ -164,7 +164,6 @@ class ContentParser:
             return serie_info
 
         except Exception as e:
-            raise e
             if self.__options["view_log"] is True:
                 print("[ERROR]", e)
         return None

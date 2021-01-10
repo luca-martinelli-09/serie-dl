@@ -46,5 +46,10 @@ class SerieHDParser:
         return [int(parse_q["season"][0]) + 1, int(parse_q["episode"][0]) + 1]
 
     def parse_dwn_url(self, driver):
-        # return download url as string or None or Exception
-        pass
+        try:
+            get_frame_link = driver.execute_script(
+                "return atob($('iframe').attr('custom-src'))")
+            driver.get(get_frame_link)
+            return driver.find_element_by_css_selector("#videolink").get_attribute('textContent').strip()
+        except:
+            return None
