@@ -211,3 +211,7 @@ options = {} # custom options
 custom_parser = {"website": CustomParser(options)}
 ContentParser(custom_parser=custom_parser)
 ```
+
+## Warning
+
+The script is developed on Windows, so Linux or macOS support is not tested and may not works.
