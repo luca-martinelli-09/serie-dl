@@ -18,6 +18,10 @@ You need also **Google Chrome**. If the script return a "cannot find Chrome bina
 python serie-dl.py [arguments]
 ```
 
+```bash
+serie-dl.exe [arguments]
+```
+
 Arguments are listed below.
 
 ## How it works
