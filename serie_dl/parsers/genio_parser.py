@@ -18,10 +18,10 @@ class GenioParser:
         self.__content.update(content)
 
     def parse_title(self, driver):
-        return driver.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
+        return driver.find_element_by_css_selector(".data h1").get_attribute("textContent").strip()
 
     def parse_movie_title(self, driver):
-        return driver.find_element_by_css_selector(".data h1").get_attribute('textContent').strip()
+        return driver.find_element_by_css_selector(".data h1").get_attribute("textContent").strip()
 
     def parse_seasons(self, driver):
         return driver.find_elements_by_css_selector("#seasons .se-c")
@@ -30,14 +30,14 @@ class GenioParser:
         return element.find_elements_by_css_selector(".episodios li")
 
     def parse_episode_title(self, driver, element):
-        return element.find_element_by_css_selector(".episodiotitle a").get_attribute('textContent').strip()
+        return element.find_element_by_css_selector(".episodiotitle a").get_attribute("textContent").strip()
 
     def parse_episode_link(self, driver, element):
         return element.find_element_by_css_selector(".episodiotitle a").get_attribute('href')
 
     def parse_ep_ss_num(self, driver, element):
         # infos in the form "SN - EN"
-        return element.find_element_by_class_name("numerando").get_attribute('textContent').split(" - ")
+        return element.find_element_by_class_name("numerando").get_attribute("textContent").split(" - ")
 
     def parse_dwn_url(self, driver):
         # get video iframe url
@@ -63,16 +63,16 @@ class GenioParser:
         # while no video found or elapsed time not passed, try to get download link from network flow
         while video_dwl_url is None and elapsed_time <= self.__options["elapse_time"]:
             # get network flow
-            browser_log = driver.get_log('performance')
+            browser_log = driver.get_log("performance")
             events = []
             for entry in browser_log:
-                events.append(json.loads(entry['message'])['message'])
+                events.append(json.loads(entry["message"])["message"])
 
             # check each network request, if contains master.m3u8, it is the download link
             for e in events:
                 try:
-                    if e['params']['response']["url"].find("master.m3u8") >= 0:
-                        video_dwl_url = e['params']['response']["url"]
+                    if e["params"]["response"]["url"].find("master.m3u8") >= 0:
+                        video_dwl_url = e["params"]["response"]["url"]
                 except KeyError:
                     pass
             # update elapsed time

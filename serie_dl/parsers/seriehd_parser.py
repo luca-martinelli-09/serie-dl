@@ -29,7 +29,7 @@ class SerieHDParser:
     # element is season element got by parse_seasons
     def parse_episodes(self, driver, element):
         driver.get(element)
-        return [{"title": episode_el.get_attribute('textContent'), "href": episode_el.get_attribute('href')} for episode_el in driver.find_elements_by_css_selector("#episodesModal li a")]
+        return [{"title": episode_el.get_attribute("textContent"), "href": episode_el.get_attribute('href')} for episode_el in driver.find_elements_by_css_selector("#episodesModal li a")]
 
     # element is season element got by parse_episodes
     def parse_episode_title(self, driver, element):
@@ -50,6 +50,6 @@ class SerieHDParser:
             get_frame_link = driver.execute_script(
                 "return atob($('iframe').attr('custom-src'))")
             driver.get(get_frame_link)
-            return driver.find_element_by_css_selector("#videolink").get_attribute('textContent').strip()
+            return driver.find_element_by_css_selector("#videolink").get_attribute("textContent").strip()
         except:
             return None

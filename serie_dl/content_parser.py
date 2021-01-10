@@ -48,18 +48,12 @@ class ContentParser:
                 # movie info get also download link for youtube-dl
                 if movie_info is not None:
                     self.__contents_got.append(movie_info)
-                else:
-                    if self.__options["view_log"] is True:
-                        print("[ERROR]", content["url"], " is not supported")
             else:
                 content["type"] == "serie"
                 serie_info = self.__get_serie_info(content)
                 # if serie infos got append to contents
                 if serie_info is not None:
                     self.__contents_got.append(serie_info)
-                else:
-                    if self.__options["view_log"] is True:
-                        print("[ERROR]", content["url"], " is not supported")
 
         if self.__options["view_log"] is True:
             print("\nGetting download links for episodes\n")
@@ -221,7 +215,7 @@ class ContentParser:
 
                 if content["type"] not in parser.support:
                     raise Exception(
-                        f"Site {site_title} is not supported for type", content["type"])
+                        f"Site {site_title} is not supported for type " + content["type"])
 
                 return parser
         raise Exception(f"Site {site_title} is not supported")
