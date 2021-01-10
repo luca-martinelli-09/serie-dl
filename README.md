@@ -4,10 +4,10 @@ A series and movies downloader for python
 
 ## Requirements
 
-Libraries required are **youtube_dl** and **selenium**.
+Libraries required are **youtube_dl**, **selenium** and **requests**. Also needed **python3**
 
 ```bash
-pip install youtube_dl, selenium
+pip install youtube_dl, selenium, requests
 ```
 
 You need also **Google Chrome**. If the script return a "Binary Chrome not found" error you must change in **default.ini** the Chrome's binary exe's path.
