@@ -219,3 +219,5 @@ ContentParser(custom_parser=custom_parser)
 ## Warning
 
 The script is developed on Windows, so Linux or macOS support is not tested and may not works.
+
+You need to download chromedriver for linux or macOS. Downloads are avaiable on [https://chromedriver.chromium.org/](this link.)
