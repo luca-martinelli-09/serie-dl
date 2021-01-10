@@ -37,8 +37,8 @@ See [example.csv](example.csv) for an example of CSV file.
 
 - [x] ilgeniodellostreaming
 - [x] guardaserie
-- [] vvvvid
-- [] seriehd
+- [ ] vvvvid
+- [ ] seriehd
 
 ## Arguments avaiable
 
