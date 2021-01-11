@@ -1,6 +1,6 @@
-# serie_dl
+# serie-dl
 
-A series and movies downloader for python
+A series and movies downloader written in Python.
 
 ## Requirements
 
