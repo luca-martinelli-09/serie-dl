@@ -45,6 +45,7 @@ See [example.csv](example.csv) for an example of CSV file.
 - [x] guardaserie
 - [x] seriehd
 - [x] vvvvid
+- [x] animeunity
 
 ## Arguments avaiable
 

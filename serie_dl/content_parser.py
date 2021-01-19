@@ -1,3 +1,4 @@
+from serie_dl.parsers.animeunity_parser import AnimeUnityParser
 from urllib import parse
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -5,6 +6,7 @@ from urllib.parse import urlparse
 from serie_dl.parsers.genio_parser import GenioParser
 from serie_dl.parsers.vvvvid_parser import VVVVIDParser
 from serie_dl.parsers.seriehd_parser import SerieHDParser
+from serie_dl.parsers.animeunity_parser import AnimeUnityParser
 
 
 class ContentParser:
@@ -27,6 +29,7 @@ class ContentParser:
             "ilgeniodellostreaming": GenioParser(self.__options),
             "vvvvid": VVVVIDParser(self.__options),
             "guardaserie": GenioParser(self.__options),
+            "animeunity": AnimeUnityParser(self.__options),
             "seriehd": SerieHDParser(self.__options)}
         if custom_parser is not None:
             self.__site_parsers.update(custom_parser)
