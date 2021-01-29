@@ -4,7 +4,7 @@ import configparser
 import argparse
 import json
 import csv
-import os
+from serie_dl.cookie_saver import CookieSaver
 
 args_parser = argparse.ArgumentParser(
     description="Download multiple files (serie's episodes or movies) using youtube-dl")
@@ -20,6 +20,9 @@ args_parser.set_defaults(onlyparse=False)
 args_parser.add_argument("-c", "--conf", dest="configname",
                          help="Use custom config file")
 args_parser.set_defaults(configname="default.ini")
+args_parser.add_argument("--cookie", dest="save_cookies", action="store_true",
+                         help="Open browser and save cookie file")
+args_parser.set_defaults(save_cookies=False)
 
 args = args_parser.parse_args()
 
@@ -121,7 +124,8 @@ def get_configs():
 
     # load config from config file, otherwise use defaults values
     view_log = config["GLOBAL"].getboolean("view_log")
-    chrome_location = config["PARSER"].get("chrome_location") if config["PARSER"].get("chrome_location") != "" else None
+    chrome_location = config["PARSER"].get(
+        "chrome_location") if config["PARSER"].get("chrome_location") != "" else None
     chromedriver_location = config["PARSER"].get("chromedriver_location")
     headless = config["PARSER"].getboolean("headless")
     elapse_time = config["PARSER"].getint("elapse_time")
@@ -154,59 +158,70 @@ def main():
     # get options from config file
     parser_options, downloader_options = get_configs()
 
-    # set custom download folder if passed to args
-    if args.outputfolder is not None:
-        downloader_options["download_folder"] = args.outputfolder
-
-    # get already parse contents from input file, otherwise use None
-    contents_parsed = None
-    if args.parsedfile is not None:
-        try:
-            with open(args.parsedfile, "r") as f:
-                contents_parsed = json.load(f)
-        except Exception as e:
-            print("[WARNING]", e)
-
-    # if no passed already parsed file, parse movies and series
-    if contents_parsed is None:
-        # setup parser
-        content_parser = ContentParser(options=parser_options)
-
-        content_to_parse = []
-
-        # if csv file is given in args, get infos from it, otherwise ask to user
-        if args.sourcefile is None:
-            content_to_parse = get_input_contents()
-        else:
-            content_to_parse = parse_csv()
-
-        # parse contents
-        contents_parsed = content_parser.parse_contents(content_to_parse)
-
-    # if onlyparse, then save parsed contents to parsed_data.json, otherwise, start download files
-    if not args.onlyparse:
-        # setup downloader
-        downloader = ContentDownloader(options=downloader_options)
-        download_success, download_failed = downloader.download_contents(
-            contents_parsed)
-
-        print("\n[DOWNLOADED] Successfull downloads:", len(download_success))
-        print("[FAILED] Failed downloads (see log.txt):", len(download_failed))
-
-        # save failed downloads to log.txt
-        with open("log.txt", "a+") as f:
-            for failed in download_failed:
-                if failed["type"] == "movie":
-                    f.write(downloader_options["movie_tmpl"].format(
-                        movie_title=failed["title"]))
-                else:
-                    f.write(downloader_options["serie_tmpl"].format(serie_name=failed["serie_title"],
-                                                                    season_num=failed["season"],
-                                                                    episode_num=failed["episode"],
-                                                                    episode_title=failed["title"]))
-
+    if args.save_cookies:
+        cookie_saver = CookieSaver(parser_options)
+        save = input("When you are ready, press s to save cookies: ")
+        while save != "s":
+            save = input("When you are ready, press s to save cookies: ")
+        if save == "s":
+            cookie_saver.save_cookies()
     else:
-        # save parsed contents to parsed_data.json
-        with open('parsed_data.json', 'w') as f:
-            json.dump(contents_parsed, f)
-            print("\n[SUCCESS] Parsed data saved in parsed_data.json")
+        # set custom download folder if passed to args
+        if args.outputfolder is not None:
+            downloader_options["download_folder"] = args.outputfolder
+
+        # get already parse contents from input file, otherwise use None
+        contents_parsed = None
+        if args.parsedfile is not None:
+            try:
+                with open(args.parsedfile, "r") as f:
+                    contents_parsed = json.load(f)
+            except Exception as e:
+                print("[WARNING]", e)
+
+        # if no passed already parsed file, parse movies and series
+        if contents_parsed is None:
+            # setup parser
+            content_parser = ContentParser(options=parser_options)
+
+            content_to_parse = []
+
+            # if csv file is given in args, get infos from it, otherwise ask to user
+            if args.sourcefile is None:
+                content_to_parse = get_input_contents()
+            else:
+                content_to_parse = parse_csv()
+
+            # parse contents
+            contents_parsed = content_parser.parse_contents(content_to_parse)
+
+        # if onlyparse, then save parsed contents to parsed_data.json, otherwise, start download files
+        if not args.onlyparse:
+            # setup downloader
+            downloader = ContentDownloader(options=downloader_options)
+            download_success, download_failed = downloader.download_contents(
+                contents_parsed)
+
+            print("\n[DOWNLOADED] Successfull downloads:",
+                  len(download_success))
+            print("[FAILED] Failed downloads (see log.txt):",
+                  len(download_failed))
+
+            # save failed downloads to log.txt
+            with open("log.txt", "a+") as f:
+                for failed in download_failed:
+                    print(failed)
+                    if "type" in failed.keys() and failed["type"] == "movie":
+                        f.write(downloader_options["movie_tmpl"].format(
+                            movie_title=failed["title"]))
+                    else:
+                        f.write(downloader_options["serie_tmpl"].format(serie_name=failed["serie_title"],
+                                                                        season_num=failed["season"],
+                                                                        episode_num=failed["episode"],
+                                                                        episode_title=failed["title"]))
+
+        else:
+            # save parsed contents to parsed_data.json
+            with open('parsed_data.json', 'w') as f:
+                json.dump(contents_parsed, f)
+                print("\n[SUCCESS] Parsed data saved in parsed_data.json")
