@@ -47,3 +47,5 @@ class AnimeUnityParser:
 
     def parse_dwn_url(self, driver):
         return driver.current_url
+
+

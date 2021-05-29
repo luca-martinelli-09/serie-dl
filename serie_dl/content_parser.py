@@ -1,3 +1,4 @@
+from serie_dl.parsers.animesaturn_parser import AnimeSaturnParser
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from urllib.parse import urlparse
@@ -31,6 +32,7 @@ class ContentParser:
             "guardaserie": GenioParser(self.__options),
             "animeunity": AnimeUnityParser(self.__options),
             "elearning.dei.unipd": MoodleUniPDParser(self.__options),
+            "animesaturn": AnimeSaturnParser(self.__options),
             "seriehd": SerieHDParser(self.__options)}
         if custom_parser is not None:
             self.__site_parsers.update(custom_parser)
@@ -237,6 +239,7 @@ class ContentParser:
             chrome_options.add_argument('--headless')
         # hide info and warnings
         chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--no-sandbox')
         # set driver
         self.__driver = webdriver.Chrome(executable_path=self.__options["chromedriver_location"],
                                          desired_capabilities=caps, options=chrome_options)

@@ -1,6 +1,6 @@
 import json
 import time
-
+import re
 
 class GenioParser:
     __options = {"elapse_tile": 30}
@@ -41,18 +41,34 @@ class GenioParser:
 
     def parse_dwn_url(self, driver):
         # get video iframe url
-        video_frame = driver.find_element_by_css_selector(
-            ".play-box-iframe iframe")
-        frame_url = video_frame.get_attribute("src")
+        try:
+            video_frame = driver.find_element_by_css_selector(
+                ".play-box-iframe iframe")
+            frame_url = video_frame.get_attribute("src")
+            # navigate to video frame and initialize video download url
+            driver.get(frame_url)
+        except:
+            pass
 
-        # navigate to video frame and initialize video download url
-        driver.get(frame_url)
         video_dwl_url = None
 
         try:
             # if md core is used, get video url
             check_md_core = driver.execute_script("return MDCore")
             return check_md_core["wurl"]
+        except:
+            pass
+    
+        try:
+            # if atob used, get video url
+            loaderScript = driver.find_element_by_class_name(
+                "playex").find_element_by_tag_name("script").get_attribute('innerHTML')
+            ilink = re.search(
+                ".*var\s+ilinks\s+=\s+\[\"([a-zA-Z0-9=]+)\"[a-zA-Z0-9=,\"\s*]*\];", loaderScript)
+            if ilink:
+                frame_url = driver.execute_script(
+                    "return atob(\"{link}\")".format(link=ilink.group(1)))
+                driver.get(frame_url)
         except:
             pass
 
